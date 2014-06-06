@@ -111,4 +111,7 @@
     <string name="sim_slot_3" translatable="false">3</string>
 
     <string name="status_bar_notification_spam_item_title">Ignore messages like this</string>
+
+    <!-- First time run hover -->
+    <string name="hover_cling_text">Hover is now enabled.\n\nWhen a new notification arrives, an overlay will show allowing you to respond to it without leaving current app.</string>
 </resources>
