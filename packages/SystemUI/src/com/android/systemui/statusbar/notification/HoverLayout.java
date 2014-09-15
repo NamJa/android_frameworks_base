@@ -38,6 +38,7 @@ public class HoverLayout extends RelativeLayout implements ExpandHelper.Callback
 
     private ExpandHelper mExpandHelper; /* Y axis (expander) */
     private SwipeHelper mSwipeHelper; /* X axis (swiper, to dismiss) */
+    private SwipeHelper mHideHelper; /* Y axis (swiper, to hide) */
 
     private Context mContext;
     private Hover mHover;
@@ -65,6 +66,7 @@ public class HoverLayout extends RelativeLayout implements ExpandHelper.Callback
         float densityScale = mContext.getResources().getDisplayMetrics().density;
         float pagingTouchSlop = ViewConfiguration.get(mContext).getScaledPagingTouchSlop();
         mSwipeHelper = new SwipeHelper(SwipeHelper.X, new SwipeHelperCallbackX(), densityScale, pagingTouchSlop);
+        mHideHelper = new SwipeHelper(SwipeHelper.Y, new SwipeHelperCallbackY(), densityScale, pagingTouchSlop);
     }
 
     public void setHoverContainer(Hover hover) {
@@ -87,14 +89,19 @@ public class HoverLayout extends RelativeLayout implements ExpandHelper.Callback
         mExpanded = expanded;
     }
 
+    public void setDragging(boolean dragging, MotionEvent event) {
+        mHideHelper.setDragging(dragging, event);
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         boolean intercept = super.onInterceptTouchEvent(event); // call super to consume touch
 
         if (mHover.isAnimatingVisibility() || mHover.isHiding()) return intercept;
 
-        intercept |= (mExpandHelper.onInterceptTouchEvent(event) |
-                mSwipeHelper.onInterceptTouchEvent(event));
+        intercept |= mExpandHelper.onInterceptTouchEvent(event)
+                | mSwipeHelper.onInterceptTouchEvent(event)
+                | mHideHelper.onInterceptTouchEvent(event);
 
         return intercept;
     }
@@ -112,23 +119,19 @@ public class HoverLayout extends RelativeLayout implements ExpandHelper.Callback
             case MotionEvent.ACTION_OUTSIDE:
                 if (!mTouchOutside) {
                     mHover.clearHandlerCallbacks();
-		    // hide Hover after 1.25 seconds
-		    mHover.startMicroHideCountdown();
+                    // hide Hover after 1.25 seconds
+                    mHover.startMicroHideCountdown();
                     mTouchOutside = true;
                 }
 
                 return touch;
         }
 
-        touch |= (mExpandHelper.onTouchEvent(event) |
-                mSwipeHelper.onTouchEvent(event));
+        touch |= mExpandHelper.onTouchEvent(event)
+                | mSwipeHelper.onTouchEvent(event)
+                | mHideHelper.onTouchEvent(event);
 
         return touch;
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        return super.dispatchTouchEvent(event);
     }
 
     @Override
@@ -136,8 +139,10 @@ public class HoverLayout extends RelativeLayout implements ExpandHelper.Callback
         super.onConfigurationChanged(newConfig);
         float densityScale = getContext().getResources().getDisplayMetrics().density;
         mSwipeHelper.setDensityScale(densityScale);
+        mHideHelper.setDensityScale(densityScale);
         float pagingTouchSlop = ViewConfiguration.get(getContext()).getScaledPagingTouchSlop();
         mSwipeHelper.setPagingTouchSlop(pagingTouchSlop);
+        mHideHelper.setPagingTouchSlop(pagingTouchSlop);
     }
 
     // ExpandHelper.Callback methods
@@ -165,7 +170,7 @@ public class HoverLayout extends RelativeLayout implements ExpandHelper.Callback
     @Override
     public void setUserLockedChild(View v, boolean userLocked) {
         if (userLocked) { // lock it and clear countdowns
-	    mTouchOutside = false; //reset
+            mTouchOutside = false; // reset
             mHover.setLocked(userLocked);
             mHover.clearHandlerCallbacks();
         } else { // unlock and process next notification
@@ -190,13 +195,23 @@ public class HoverLayout extends RelativeLayout implements ExpandHelper.Callback
         }
 
         @Override
-        public boolean canChildBeDismissed(View v) {
+        public boolean isConstrainSwipeEnabled() {
+            return !mHover.isClearable();
+        }
+
+        @Override
+        public boolean isFadeoutEnabled(int gestureDirection) {
             return mHover.isClearable();
         }
 
         @Override
-        public void onChildDismissed(View v) {
-	    mTouchOutside = false; // reset
+        public boolean canChildBeDismissed(int gestureDirection, View v) {
+            return mHover.isClearable();
+        }
+
+        @Override
+        public void onChildDismissed(int gestureDirection, View v) {
+            mTouchOutside = false; // reset
             mHover.clearHandlerCallbacks();
             mHover.setAnimatingVisibility(false);
             mHover.setLocked(false);
@@ -220,7 +235,7 @@ public class HoverLayout extends RelativeLayout implements ExpandHelper.Callback
 
         @Override
         public void onBeginDrag(View v) {
-	    mTouchOutside = false; // reset
+            mTouchOutside = false; // reset
             mHover.setLocked(true);
             mHover.clearHandlerCallbacks();
         }
@@ -231,6 +246,44 @@ public class HoverLayout extends RelativeLayout implements ExpandHelper.Callback
             mHover.setLocked(false);
             mHover.clearHandlerCallbacks();
             mHover.processOverridingQueue(mExpanded);
+        }
+    }
+
+    private class SwipeHelperCallbackY extends SwipeHelperCallbackX {
+        @Override
+        public View getChildAtPosition(MotionEvent ev) {
+            return getChildContentView(null);
+        }
+
+        @Override
+        public View getChildContentView(View v) {
+            return mHover.getCurrentLayout();
+        }
+
+        @Override
+        public boolean isConstrainSwipeEnabled() {
+            return false;
+        }
+
+        @Override
+        public boolean isFadeoutEnabled(int gestureDirection) {
+            return false;
+        }
+
+        @Override
+        public boolean canChildBeDismissed(int gestureDirection, View v) {
+            return gestureDirection == SwipeHelper.GESTURE_NEGATIVE;
+        }
+
+        @Override
+        public void onChildDismissed(int gestureDirection, View v) {
+            mTouchOutside = false; // reset
+            mHover.clearHandlerCallbacks();
+            mHover.setAnimatingVisibility(false);
+            mHover.setLocked(false);
+
+            // quickly remove layout
+            mHover.dismissHover(false, false);
         }
     }
 }
