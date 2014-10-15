@@ -442,7 +442,6 @@ public abstract class BaseStatusBar extends SystemUI implements
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_USER_SWITCHED);
         mContext.registerReceiver(mBroadcastReceiver, filter);
-    }
 
         mContext.getContentResolver().registerContentObserver(
                 Settings.System.getUriFor(Settings.System.HOVER_STATE),
