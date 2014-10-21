@@ -234,8 +234,8 @@ public class NotificationManagerService extends INotificationManager.Stub
     private static final String TAG_PACKAGE = "package";
     private static final String ATTR_NAME = "name";
 
-    private static final String PEEK_POLICY = "peek_policy.xml"
-    private static final String FLOATING_MODE_POLICY = "floating_mode_policy.xml"
+    private static final String PEEK_POLICY = "peek_policy.xml";
+    private static final String FLOATING_MODE_POLICY = "floating_mode_policy.xml";
     private static final String HOVER_POLICY = "hover_policy.xml";
 
     private final ArrayList<NotificationScorer> mScorers = new ArrayList<NotificationScorer>();

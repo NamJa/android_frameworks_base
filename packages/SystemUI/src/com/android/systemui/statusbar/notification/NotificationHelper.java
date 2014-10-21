@@ -1,4 +1,4 @@
-git/*
+/*
  * Copyright (C) 2014 ParanoidAndroid Project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -109,6 +109,11 @@ public class NotificationHelper {
         mTelephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         mTelephonyManager.listen(new CallStateListener(), PhoneStateListener.LISTEN_CALL_STATE);
 
+
+        // we need to know which is the foreground app
+        mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+
+
         // create peek app receiver if null
         if (mPeekAppReceiver == null) {
             mPeekAppReceiver = new PeekAppReceiver();
@@ -121,9 +126,7 @@ public class NotificationHelper {
         }
     }
 
-        // we need to know which is the foreground app
-        mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
-    }
+
 
     public String getForegroundPackageName() {
         List<RunningTaskInfo> taskInfo = mActivityManager.getRunningTasks(1);
@@ -404,5 +407,4 @@ public class NotificationHelper {
         return state == TelephonyManager.SIM_STATE_PIN_REQUIRED
                  | state == TelephonyManager.SIM_STATE_PUK_REQUIRED
                  | state == TelephonyManager.SIM_STATE_NETWORK_LOCKED;
-    }
 }
