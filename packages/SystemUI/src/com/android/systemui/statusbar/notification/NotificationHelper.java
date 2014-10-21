@@ -173,6 +173,7 @@ public class NotificationHelper {
                 mPeekAppOverlayShowing = false;
             }
         }
+    }
 
 
     /**
@@ -407,4 +408,5 @@ public class NotificationHelper {
         return state == TelephonyManager.SIM_STATE_PIN_REQUIRED
                  | state == TelephonyManager.SIM_STATE_PUK_REQUIRED
                  | state == TelephonyManager.SIM_STATE_NETWORK_LOCKED;
+    }
 }

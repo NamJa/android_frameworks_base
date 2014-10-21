@@ -37,7 +37,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.content.res.ThemeConfig;
 import android.database.ContentObserver;
-import android.android.graphics.drawable.Drawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
