@@ -1065,7 +1065,7 @@ public abstract class BaseStatusBar extends SystemUI implements
             } catch (RemoteException e) {
             }
 
-	    int flags = Intent.FLAG_FLOATING_WINDOW | Intent.FLAG_ACTIVITY_CLEAR-TASK;
+	    int flags = Intent.FLAG_FLOATING_WINDOW | Intent.FLAG_ACTIVITY_CLEAR_TASK;
             boolean allowed = true; // default on, except for preloaded false
             try {
                 // preloaded apps are added to the blacklist array when is recreated, handled in the notification manager
