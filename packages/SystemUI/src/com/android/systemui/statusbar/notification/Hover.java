@@ -620,10 +620,6 @@ public class Hover {
             // System is dead
         }
 
-        if (entry.notification.getPackageName().equals(
-                mNotificationHelper.getForegroundPackageName()))
-        foreground = true;
-
         if (!allowed | foreground) {
             addStatusBarNotification(entry.notification);
             return;
