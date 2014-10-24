@@ -105,6 +105,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
     private boolean mHighEndGfx;
     private INotificationManager mNotificationManager;
 
+    private RecentsActivity mRecentsActivity;
     private ImageView mClearRecents;
 
     public static interface RecentsScrollView {

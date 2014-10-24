@@ -2315,7 +2315,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             if (mRibbonViewAnim != null) mRibbonViewAnim.cancel();
             if (mSettingsButtonAnim != null) mSettingsButtonAnim.cancel();
             if (mNotificationButtonAnim != null) mNotificationButtonAnim.cancel();
-	    if (mHoverButtonaAnim != null) mHoverButtonAnim.cancel();
+	    if (mHoverButtonAnim != null) mHoverButtonAnim.cancel();
             if (mClearButtonAnim != null) mClearButtonAnim.cancel();
             if (mAddTileButtonAnim != null) mAddTileButtonAnim.cancel();
 
