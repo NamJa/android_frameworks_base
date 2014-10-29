@@ -1227,9 +1227,11 @@ public abstract class BaseStatusBar extends SystemUI implements
             return;
         }
         // Add the expanded view and icon.
-        int pos = mNotificationData.add(entry);
-        if (DEBUG) {
-            Log.d(TAG, "addNotificationViews: added at " + pos);
+	if (mNotificationData.findByKey(entry.key) == null) {
+            int pos = mNotificationData.add(entry);
+            if (DEBUG) {
+                Log.d(TAG, "addNotificationViews: added at " + pos);
+	    }
         }
         updateExpansionStates();
         updateNotificationIcons();
@@ -1245,7 +1247,7 @@ public abstract class BaseStatusBar extends SystemUI implements
 	} else {
             // screen on - check if hover is enabled
             if (mNotificationHelper.isHoverEnabled()) {
-                mHover.setNotification(entry, false);
+                mHover.setNotification(entry, true);
             } else {
                 mHover.addStatusBarNotification(entry.notification);
             }
